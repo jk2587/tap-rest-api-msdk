@@ -36,6 +36,9 @@ from tap_rest_api_msdk.utils import flatten_json, get_start_date
 # requests_log.setLevel(logging.DEBUG)
 # requests_log.propagate = True
 
+class MeltanoHATEOASPaginator(BaseHATEOASPaginator):
+    def get_next_url(self, response):
+        return response.json().get("next")
 
 class DynamicStream(RestApiStream):
     """Define custom stream."""
@@ -316,7 +319,7 @@ class DynamicStream(RestApiStream):
                 pagination_total_limit_param=self.pagination_total_limit_param,
             )
         elif self.pagination_request_style == "hateoas_paginator":
-            return BaseHATEOASPaginator()
+            return MeltanoHATEOASPaginator()
         elif self.pagination_request_style == "single_page_paginator":
             return SinglePagePaginator()
         elif self.pagination_request_style == "page_number_paginator":
